@@ -1,0 +1,2522 @@
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class about extends JInternalFrame implements ActionListener
+{
+	Container cp;
+	private JLabel  lbl;
+	JButton b;
+	public about()
+	    {
+		
+	    cp=getContentPane();
+		setSize(600,550);
+		setLayout(null);
+		
+		setTitle("library");
+		
+		ImageIcon image = new ImageIcon("images/about.jpg");
+		JLabel background = new JLabel(image);
+		JButton b=new JButton("Close");
+		setLocation(200,130);
+	
+		Color c1=new Color(230,222,220);
+		cp.setBackground(c1);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+		b.setBounds(260,480,80,30);
+		cp.add(background);
+		cp.add(b);
+		
+		 setClosable (true);
+	     setResizable (false);
+	     setMaximizable (false);
+	     setIconifiable (true);
+	     setVisible (true);
+		
+		b.addActionListener(this);
+		
+		
+		
+		}
+	public void actionPerformed(ActionEvent e)
+	{
+		
+	dispose();
+    }
+}
+
+
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+public class AddBookCatagory extends JInternalFrame implements ActionListener
+{
+     Container cp;
+	 JLabel lblBook, lblBookCatID, lblBookName;
+	 JTextField txtBookCatID,txtBookName;
+	 JButton btnAdd, btnCancel;
+	  
+	 Connection con;
+	 Statement st;
+	 ResultSet rs;
+	 
+	 
+	 
+	 public AddBookCatagory(Connection con)
+	 {
+		this.con = con;
+		cp=getContentPane();
+		setSize(600,400);
+		setLayout(null);
+        //lblBook=new JLabel("Add Book Catagory",Label.LEFT);
+		
+		ImageIcon image = new ImageIcon("images/addbookcategory.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+		lblBookName =new JLabel("Book Catagory  :");
+		txtBookName=new JTextField(20);
+		btnAdd=new JButton("Add");
+		btnCancel=new JButton("Cancel");
+		//Font f=new Font("Arial",Font.BOLD,30);
+		//lblBook.setFont(f);
+	    //Color c1=new Color(250,50,50);
+		//lblBook.setForeground(c1);
+        //lblBook.setBounds(60,20,400,35);
+		
+		lblBookName.setBounds(100,100,150,25);
+		txtBookName.setBounds(200,100,150,25);
+		
+	    btnAdd.setBounds(200,150,80,25);
+		btnCancel.setBounds(300,150,80,25);
+	    //cp.add(lblBook);
+		cp.add(lblBookName);
+		cp.add(txtBookName);
+		cp.add(btnAdd);
+		cp.add(btnCancel);
+		setLocation(50,50);
+		setTitle("Add Book Catagory");
+		setClosable(true);
+		setResizable(false);
+		setMaximizable(false);
+		setIconifiable(true);
+	    setVisible(true);
+	    setLocation(25,75);
+		btnAdd.addActionListener(this);
+	    btnCancel.addActionListener(this);
+	  
+	   }
+	    public void actionPerformed(ActionEvent ae)
+	    {
+         String cat=txtBookName.getText();
+		
+		   if(ae.getSource()==btnAdd)
+			{
+	         
+			 if (cat.length() > 0 )
+		     {
+					
+					try
+					{
+						st = con.createStatement();
+						rs = st.executeQuery("select BookCatID from BookCatagory where BookCat ='" + cat + "'");
+						if (rs.next())
+						{				
+							JOptionPane.showMessageDialog(this,"Book Catagory Exists"," Catagory Exists",JOptionPane.ERROR_MESSAGE);
+						}
+						else
+						{	
+						    int result;
+							result = st.executeUpdate("insert into BookCatagory"+"(BookCat)"+"values('"+cat+"')");					
+							if (result == 1)
+							{
+								JOptionPane.showMessageDialog(this,"Book Catagory was added.","Catagory Added",JOptionPane.INFORMATION_MESSAGE);
+								dispose();
+							}
+						
+						}
+						rs.close();
+						
+					}
+				    catch (SQLException sqle)
+					{
+						System.out.println(sqle);
+					}
+			}
+	        else
+		    {
+	 	     JOptionPane.showMessageDialog(this,"Please enter Book Catagory","Required Information",JOptionPane.ERROR_MESSAGE);
+		    }
+				 return;
+		
+		    }
+	        else if(ae.getSource()==btnCancel)
+		    {
+			setVisible (false);
+			dispose();
+		    }
+	
+	    }
+
+}
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+public class AddNewBook extends JInternalFrame implements ActionListener
+{
+    Container cp;
+    JLabel lblAddNewBook, lblBookName,lblBookAuthor,lblBookCatagory;
+    JTextField txtBookName,txtBookAuthor;
+    JButton btnAddBook, btnCancel;
+    JComboBox comboBookCatagory;
+    private String[] c =new String[100];
+	Connection con;
+	Statement st;
+	ResultSet rs;
+	
+	
+	
+	public AddNewBook(Connection con)
+	{
+	this.con = con;
+	cp=getContentPane();
+	setSize(600,600);
+	setLayout(null);
+	setTitle("Add New Book");
+	
+    
+	ImageIcon image = new ImageIcon("images/addnewBook.jpg");
+	JLabel background = new JLabel(image);
+	background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	cp.add(background);
+
+
+
+	lblBookName=new JLabel("Book Name          :");
+	lblBookAuthor=new JLabel("Author Name       :");
+	lblBookCatagory=new JLabel("Select Catagory  :");
+    
+	txtBookName=new JTextField(15);
+	txtBookAuthor=new JTextField(15);
+ 
+	comboBookCatagory=new JComboBox();
+  
+	
+	
+	btnAddBook=new JButton("Add");
+	btnCancel=new JButton("Cancel");
+
+	
+	lblBookName.setBounds(100, 100, 200, 25);
+	txtBookName.setBounds(220, 100, 150, 25);
+	
+	lblBookAuthor.setBounds(100, 130, 200, 25);
+	txtBookAuthor.setBounds(220, 130, 150, 25);
+	
+	lblBookCatagory.setBounds(100, 160, 150, 25);
+    comboBookCatagory.setBounds(220,160,150,25);
+	btnAddBook.setBounds(220,220,90,25);
+    btnCancel.setBounds(340,220,90,25);
+
+    cp.add (lblBookName);
+	cp.add (txtBookName);
+	cp.add (lblBookAuthor);
+	cp.add (txtBookAuthor);
+	cp.add (lblBookCatagory);
+
+	cp.add(comboBookCatagory);
+	cp.add (btnAddBook);
+	cp.add (btnCancel);
+	setClosable (true);
+	setResizable (false);
+	setMaximizable (false);
+	setIconifiable (true);
+	setVisible (true);
+	setLocation(0,75);
+	btnAddBook.addActionListener(this);
+    btnCancel.addActionListener(this);
+
+	try {
+			int i=0;
+			int j;
+			st = con.createStatement ();	
+			ResultSet rs=st.executeQuery("Select * from BookCatagory");
+			while(rs.next())
+			{
+				c[i]=rs.getString("BookCat");
+				i++;
+			}
+			for(j=0;j<i;j++)
+			{
+				comboBookCatagory.addItem(c[j]);
+			}
+			comboBookCatagory.addActionListener(this);
+			comboBookCatagory.setSelectedItem(c[0]);
+			rs.close();
+		}
+		catch (SQLException sqlex) 
+			{			
+ 			JOptionPane.showMessageDialog (null, "A Problem Occurs While Loading Form.");
+ 			dispose ();				
+	 	    }
+	
+	}
+	public void actionPerformed(ActionEvent ae)
+	{
+	        String bname=txtBookName.getText();
+		    String bauthor=txtBookAuthor.getText();
+		    String catagory=comboBookCatagory.getSelectedItem().toString();
+			if(ae.getSource()==btnAddBook)
+			{   
+				 if (bname.length() > 0 && bauthor.length() > 0)
+				 {
+					try
+					{
+                        st = con.createStatement();
+						rs = st.executeQuery("select BookId from BookMaster where BookCatID='" + catagory + "' AND  BookAuth ='" + bauthor + "'");
+						if (rs.next())    
+						{				
+							JOptionPane.showMessageDialog(this,"This book is already exists","Book Exists",JOptionPane.ERROR_MESSAGE);
+						}
+						else
+						{	
+
+							int result;
+							result = st.executeUpdate("insert into BookMaster"+"(BookCatID,BookName,BookAuth)"+"values('"+ catagory + "','" + bname +"' ,'" + bauthor +"')");						
+							if (result == 1)
+							{
+								JOptionPane.showMessageDialog(this,"Book was added.","Book Added",JOptionPane.INFORMATION_MESSAGE);
+								dispose();
+							}
+								
+						}
+						rs.close();
+						
+					}
+					catch (SQLException sqle)
+					{
+						System.out.println(sqle);
+					}
+				 }
+				 else
+				 {
+	 				JOptionPane.showMessageDialog(this,"Please enter Required Information","Required Information",JOptionPane.ERROR_MESSAGE);
+				 }
+				 return;
+
+
+			}
+			else if(ae.getSource()==btnCancel)
+			{
+				setVisible (false);
+				dispose();
+			}
+
+	}
+
+}
+
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+public class AddStudent extends JInternalFrame implements ActionListener
+{
+    Container cp;
+    JLabel lblAddStudent, lblStudentId, lblStudentName,lblStudentClass,lblStudentAddress,lblStudentSecurity;
+    JTextField txtStudentId,txtStudentName,txtStudentClass,txtStudentSecurity;
+    JTextField txtStudentAddress;
+	JButton btnAddStudent, btnCancel;
+	
+    Connection con;
+	Statement st;
+	ResultSet rs;
+	
+	
+	public AddStudent(Connection con)
+	{
+		this.con = con;
+        cp=getContentPane();
+		setSize(600,600);
+		setLayout(null);
+		ImageIcon image = new ImageIcon("images/newstudentregistration.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+		setTitle("Student Registration");
+		//lblAddStudent=new JLabel("NEW STUDENT REGISTRATION",Label.LEFT);
+
+		lblStudentId=new JLabel("Student Id         :");
+		lblStudentName=new JLabel("Student Name :");
+		lblStudentClass=new JLabel("Student Class  :");
+		lblStudentAddress=new JLabel("Student Address  :");
+		lblStudentSecurity=new JLabel("Student Security  :");
+		
+		txtStudentId=new JTextField(15);
+		txtStudentName=new JTextField(15);
+		txtStudentClass =new JTextField(15);
+		
+		txtStudentAddress=new JTextField(15);
+		
+		txtStudentSecurity=new JTextField(15);
+		btnAddStudent=new JButton("Register");
+		btnCancel=new JButton("Cancel");
+
+		//Font f=new Font("Arial",Font.BOLD,30);
+		//lblAddStudent.setFont(f);
+		//Color c1=new Color(250,50,50);
+		//lblAddStudent.setForeground(c1);
+		//lblAddStudent.setBounds(60,20,500,30);
+        
+		lblStudentId.setBounds(100,100,200,25);
+		txtStudentId.setBounds(220,100,150,25);
+		lblStudentName.setBounds(100,130,200,25);
+		txtStudentName.setBounds(220,130,150,25);
+		lblStudentClass.setBounds(100,160,150,25);
+        txtStudentClass.setBounds(220,160,150,25);
+		lblStudentAddress.setBounds(100,190,150,25);
+		txtStudentAddress.setBounds(220,190,150,25);
+		lblStudentSecurity.setBounds(100,250,150,25);
+		txtStudentSecurity.setBounds(220,250,150,25);
+		btnAddStudent.setBounds(220,300,90,25);
+		btnCancel.setBounds(340,300,90,25);
+		//cp.add(lblAddStudent);
+        cp.add(lblStudentId);
+		cp.add(txtStudentId);
+		cp.add(lblStudentName);
+		cp.add(txtStudentName);
+		cp.add(lblStudentClass);
+		cp.add(txtStudentClass);
+		cp.add(lblStudentAddress);
+		cp.add(txtStudentAddress);
+		//txtStudentAddress.setLineWrap(true);
+		cp.add(lblStudentSecurity);
+		cp.add(txtStudentSecurity);
+		cp.add(btnAddStudent);
+		cp.add(btnCancel);
+		setClosable(true);
+		setResizable(false);
+		setMaximizable(false);
+		setIconifiable(true);
+		setVisible(true);
+	    setLocation(25,75);
+	    btnAddStudent.addActionListener(this);
+		btnCancel.addActionListener(this);
+	}
+
+	public void actionPerformed(ActionEvent ae)
+	{
+		String sid=txtStudentId.getText();
+		String sname=txtStudentName.getText();
+		String sclass=txtStudentClass.getText();
+		String saddress=txtStudentAddress.getText();
+		String security=txtStudentSecurity.getText();
+		
+		if(ae.getSource()==btnAddStudent)
+		{
+			if (sid.length() > 0 && sname.length() > 0 && sclass.length() >0 && saddress.length() >0 && security.length() > 0)
+			{
+				try
+				{
+					int studentID = Integer.parseInt(sid);				
+				
+					try
+					{
+						st = con.createStatement();
+						rs = st.executeQuery("select Id from StudentMaster where StudentId=" + sid);
+						if (rs.next())
+						{				
+							JOptionPane.showMessageDialog(this,"Student already exists","Student Exists",JOptionPane.ERROR_MESSAGE);
+						}
+
+						else
+						{	
+
+							int result;
+							result = st.executeUpdate("insert into StudentMaster"+"(StudentId,StudentName,StudentClass,StudentAddress,StudentSecurity)"+"values('"+sid+"','"+sname+"','"+sclass+"','"+saddress+"','"+security+"')");						
+							if (result == 1)
+							{
+								JOptionPane.showMessageDialog(this,"Student was Added.","Rgistration Complete",JOptionPane.INFORMATION_MESSAGE);
+								dispose();
+							}
+								
+						}
+						rs.close();
+						
+					}
+					catch (SQLException sqle)
+					{
+						System.out.println(sqle.getMessage());
+					}
+				}
+				catch (NumberFormatException nfe)
+				{
+					JOptionPane.showMessageDialog(this,"ID must be numeric","Invaid ID",JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(this,"Please Fill Complete Form.","Required Information",JOptionPane.ERROR_MESSAGE);
+			}
+			return;
+		}
+		else if(ae.getSource()==btnCancel)
+		{
+			setVisible (false);
+			dispose();
+		}
+	}
+}
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+public class AddUser extends JInternalFrame implements ActionListener
+{
+	private Container cp;
+	private JLabel lblAddUser, lblUserName, lblPassword;
+	private JTextField txtUserName;
+	private JPasswordField txtPassword;
+	private JButton btnCreateUser, btnCancel;
+
+	Connection con;
+	Statement st;
+	ResultSet rs;
+
+	public AddUser(Connection con)
+	{
+		this.con = con;
+
+		cp=getContentPane();
+		setSize(500,500);
+		setLayout(null);
+		ImageIcon image = new ImageIcon("images/addnewuser.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+		
+		
+		//lblAddUser=new JLabel("ADD NEW ADMIN USER",Label.LEFT);
+		lblUserName=new JLabel("Enter user name :");
+		lblPassword=new JLabel("Enter Password  :");
+		txtUserName=new JTextField(15);
+		txtPassword=new JPasswordField(15);
+		
+		btnCreateUser=new JButton("Create");
+		btnCancel=new JButton("Cancel");
+		//Font f=new Font("Arial",Font.BOLD,30);
+		//lblAddUser.setFont(f);
+		//Color c1=new Color(250,50,50);
+		//lblAddUser.setForeground(c1);
+		//lblAddUser.setBounds(60,20,350,30);
+		
+		lblUserName.setBounds(100,100,200,25);
+		txtUserName.setBounds(220,100,150,25);
+		lblPassword.setBounds(100,130,200,25);
+		txtPassword.setBounds(220,130,150,25);
+		btnCreateUser.setBounds(200,180,80,25);
+		btnCancel.setBounds(300,180,80,25);
+		txtUserName.setToolTipText("Enter User Name");
+		txtPassword.setToolTipText("Enter Password");
+		//cp.add(lblAddUser);
+		cp.add(lblUserName);
+		cp.add(txtUserName);
+		cp.add(lblPassword);
+		cp.add(txtPassword);
+		cp.add(btnCreateUser);
+		cp.add(btnCancel);
+		setLocation(100,100);
+		setTitle("Add new user");
+		setClosable(true);
+		setResizable(false);
+		setMaximizable(false);
+		setIconifiable(true);
+		setVisible(true);
+		btnCreateUser.addActionListener(this);
+		btnCancel.addActionListener(this);
+	}
+
+    public void actionPerformed(ActionEvent ae)
+	{
+
+			String u=txtUserName.getText();
+			String p= new String (txtPassword.getPassword());
+			if(ae.getSource()==btnCreateUser)
+			{
+				 if (u.length() > 0 && p.length() > 0)
+				 {
+					
+					try
+					{
+						st = con.createStatement();
+						rs = st.executeQuery("select id from userTable where user='" + u + "'");
+						if (rs.next())
+						{				
+							JOptionPane.showMessageDialog(this,"Your User name already exists","User Exists",JOptionPane.ERROR_MESSAGE);
+						}
+						else
+						{	
+
+							int result;
+							result = st.executeUpdate("insert into userTable"+"(user,pass)"+"values('"+u+"','"+p+"')");						
+							if (result == 1)
+							{
+								JOptionPane.showMessageDialog(this,"Username was added.","User Created",JOptionPane.INFORMATION_MESSAGE);
+								dispose();
+							}
+								
+						}
+						rs.close();
+						
+					}
+					catch (SQLException sqle)
+					{
+						System.out.println("Query Error while inserting data");
+					}
+				 }
+				 else
+				 {
+	 				JOptionPane.showMessageDialog(this,"Please enter new username and password","Required Information",JOptionPane.ERROR_MESSAGE);
+				 }
+				 return;
+
+
+			}
+			else if(ae.getSource()==btnCancel)
+			{
+				setVisible (false);
+				dispose();
+			}
+
+	}
+
+}
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+
+public class BookIssue extends JInternalFrame implements ActionListener
+{
+	private Container cp;
+	private JLabel lblBookIssue, lblBookId, lblBookName,lblBookAuthor,lblStuId,lblIssueDate,lblReturnDate,lblStuName,lblStuClass,lblCategory;
+	private JTextField txtBookId,txtBookName,txtBookAuthor,txtStuId,txtIssueDate,txtReturnDate,txtStuName,txtStuClass,txtCategory;
+	private JButton btnIssue, btnCancel;
+    private JButton btnFindStudent,btnFindBook;
+	
+	Connection con;
+	Statement st;
+	ResultSet rs;
+
+	public BookIssue(Connection con)
+	{
+		this.con = con;
+	
+        cp=getContentPane();
+		setSize(600,600);
+		setLayout(null);
+		
+		ImageIcon image = new ImageIcon("images/issuebook.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+		
+		
+		lblBookId=new JLabel("Enter Book Id  :");
+		lblBookName=new JLabel(" Book Name      :");
+		lblBookAuthor=new JLabel(" Book Author    :");
+		lblStuId=new JLabel("Enter Student Id :");
+		lblStuName=new JLabel("Student Name     :");
+		lblStuClass=new JLabel("Student Class   :");
+		lblIssueDate=new JLabel(" Date Issued     :");
+		lblReturnDate=new JLabel(" Return Date     :");
+		lblCategory=new JLabel("Book Category      :");
+		
+		txtBookId=new JTextField(15);
+		txtBookName=new JTextField(15);
+		txtBookName.setEnabled(false);
+		txtBookAuthor=new JTextField(15);
+		txtBookAuthor.setEnabled(false);
+
+		txtStuId=new JTextField(15);
+		txtIssueDate=new JTextField(15);
+		txtReturnDate=new JTextField(20);
+        txtStuName=new JTextField(20);
+		txtStuName.setEnabled(false);
+		txtStuClass=new JTextField(20);
+		txtStuClass.setEnabled(false);
+        txtCategory=new JTextField(20);
+		txtCategory.setEnabled(false);
+
+
+		btnIssue=new JButton("Issue");
+		btnCancel=new JButton("Cancel");
+		btnFindBook=new JButton("Find Book");
+		btnFindStudent=new JButton("Find Student");
+		
+
+		Font f=new Font("Times New Roman",Font.BOLD,14);
+		lblBookId.setFont(f);
+		Color c1=new Color(250,50,50);
+		lblBookId.setForeground(c1);
+		lblStuId.setFont(f);
+		lblStuId.setForeground(c1);
+		
+		
+		lblBookId.setBounds(100,100,200,25);
+		txtBookId.setToolTipText("Enter Book Id and Click on Find Book");
+		txtBookId.setBounds(220,100,150,25);
+		
+		lblBookName.setBounds(100,130,200,25);
+		txtBookName.setBounds(220,130,150,25);
+		
+		lblBookAuthor.setBounds(100,160,200,25);
+		txtBookAuthor.setBounds(220,160,150,25);
+		
+		lblCategory.setBounds(100,190,150,25);
+		txtCategory.setBounds(220,190,150,25);
+		
+		btnFindBook.setBounds(240,230,120,25);
+		
+		lblStuId.setBounds(100,270,200,25);
+		txtStuId.setBounds(220,270,150,25);
+	    
+     
+
+		lblStuName.setBounds(100,300,150,25);
+		txtStuName.setBounds(220,300,150,25);
+		lblStuClass.setBounds(100,330,150,25);
+		txtStuClass.setBounds(220,330,150,25);
+        
+	    btnFindStudent.setBounds(240,370,120,25);
+		
+		lblIssueDate.setBounds(100,410,150,25);
+		txtIssueDate.setBounds(220,410,150,25);
+
+		Calendar issueDate = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+		txtIssueDate.setText (formatter.format(issueDate.getTime()));
+		Calendar returnDate = (Calendar)issueDate.clone();
+		returnDate.add(Calendar.DAY_OF_YEAR, 15);
+
+
+        lblReturnDate.setBounds(100,440,150,25);
+		txtReturnDate.setBounds(220,440,150,25);
+		txtReturnDate.setText(formatter.format(returnDate.getTime()));
+
+		btnIssue.setBounds(220,500,80,25);
+		btnCancel.setBounds(330,500,80,25);
+       
+		
+		
+	
+		cp.add(lblBookId);
+		cp.add(txtBookId);
+		cp.add(lblBookName);
+		cp.add(txtBookName);
+		cp.add(lblBookAuthor);
+		cp.add(txtBookAuthor);
+		
+		cp.add(lblCategory);
+		cp.add(txtCategory);
+		
+		
+		cp.add(lblStuId);
+		cp.add(txtStuId);
+		
+		cp.add(lblStuName);
+		cp.add(txtStuName);
+		
+	
+		
+		cp.add(lblStuClass);
+		cp.add(txtStuClass);
+		
+		cp.add(lblIssueDate);
+		cp.add(txtIssueDate);
+	    cp.add(lblReturnDate);
+		cp.add(txtReturnDate);
+		
+		cp.add(btnFindBook);
+		cp.add(btnFindStudent);
+		
+		cp.add(btnIssue);
+		cp.add(btnCancel);
+		
+		setLocation(50,50);
+		setTitle("Book Issue");
+		setClosable(true);
+		setResizable(false);
+		setMaximizable(false);
+		setIconifiable(true);
+		setVisible(true);
+		btnIssue.addActionListener(this);
+		btnCancel.addActionListener(this);
+		btnFindBook.addActionListener(this);
+		btnFindStudent.addActionListener(this);
+	}
+	
+	public void actionPerformed(ActionEvent ae)
+	{
+		String bid=txtBookId.getText();
+
+		if(ae.getSource()==btnFindBook)
+		{
+			if (bid.length() > 0)
+			{
+				boolean invalidID = false;
+				int  i = -1;
+		
+				try
+				{	
+					i = Integer.parseInt(bid);						
+
+				}
+				catch(NumberFormatException e)
+				{
+					JOptionPane.showMessageDialog(this,"Please enter numeric id","Invalid ID",JOptionPane.ERROR_MESSAGE);
+					invalidID = true;
+				}
+				if (invalidID == false)
+				{
+					try
+					{   
+						st = con.createStatement();
+						rs=st.executeQuery("Select * from IssuedMaster where bookid= " + i);
+						if(rs.next())
+						{
+                         JOptionPane.showMessageDialog(this,"This Book Already Issued","Already Issued",JOptionPane.ERROR_MESSAGE);  
+						}
+						else
+						{
+						
+						    rs = st.executeQuery("select * from BookMaster where BookId =" + i);
+						    
+							if (rs.next())
+							{				
+								String Bcat=rs.getString("BookCatID");
+								String Bname=rs.getString("BookName");
+								String Bauth=rs.getString("BookAuth");
+
+								txtBookAuthor.setText(Bauth);
+								txtBookName.setText(Bname);
+								txtCategory.setText(Bcat);
+
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(this,"This Book Id Does Not Exist","Wrong Id",JOptionPane.ERROR_MESSAGE);
+							}
+						}
+						rs.close();
+					}
+					catch (SQLException sqle)
+					{
+						System.out.println("Database Error");
+					} 	
+				}				
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(this,"Please Enter Book Id","Required Information",JOptionPane.ERROR_MESSAGE);
+			}
+
+			return;
+		}
+		else if(ae.getSource()==btnFindStudent)
+		{
+			String sid=txtStuId.getText();
+			
+			if (sid.length() > 0)
+			{	
+				int  j = -1;
+				boolean invalidID = false;
+				try
+				{
+					j = Integer.parseInt(sid);				
+
+				}
+				catch(NumberFormatException e)
+				{
+					invalidID = true;
+					JOptionPane.showMessageDialog(this,"Please enter numeric student id","Invalid ID",JOptionPane.ERROR_MESSAGE);
+					//System.out.println(e.getMessage());
+				}
+
+				if (invalidID == false)
+				{
+					try
+					{						
+		
+						st = con.createStatement();
+						rs = st.executeQuery("select * from StudentMaster where StudentID=" + j);
+						if (rs.next())
+						{				
+							String sname=rs.getString("StudentName");
+							String sclass=rs.getString("StudentClass");
+							txtStuName.setText(sname);
+							txtStuClass.setText(sclass);
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(this,"This Student Id Does Not Exist","Wrong Id",JOptionPane.ERROR_MESSAGE);
+						}
+						rs.close();
+					}
+					catch (SQLException sqle)
+					{
+						System.out.println(sqle.getMessage());
+					} 	
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(this,"Please Enter Student Id","Required Information",JOptionPane.ERROR_MESSAGE);
+			}
+
+			return;
+			
+		}
+
+		else if(ae.getSource()==btnCancel)
+		{
+			setVisible (false);
+			dispose();
+		}
+		else if(ae.getSource()==btnIssue)
+		{
+			String BookId = txtBookId.getText();
+			String StudentId = txtStuId.getText();
+			String BookName=txtBookName.getText();
+			String BookAuthor=txtBookAuthor.getText();
+			String BookCategory=txtCategory.getText();
+			String StudentName=txtStuName.getText();
+			String StudentClass=txtStuClass.getText();
+			String DateIssued=txtIssueDate.getText();
+			String DateReturn=txtReturnDate.getText();
+			
+			if (BookId.length() > 0 && StudentId.length() > 0 && BookName.length() > 0 && BookAuthor.length() > 0 && BookCategory.length() > 0 && StudentName.length() > 0 && StudentClass.length() > 0)
+			{
+				if (DateIssued.length() > 0 && DateReturn.length() > 0)
+				{
+				
+					try
+					{
+						st = con.createStatement();
+						rs = st.executeQuery("select id from IssuedMaster where bookid=" + Integer.parseInt(BookId) + " AND  studentid =" + Integer.parseInt(StudentId));
+
+						if (rs.next())
+						{				
+							JOptionPane.showMessageDialog(this,"This Student already Issued this book","Book Already Issued",JOptionPane.ERROR_MESSAGE);
+						}
+						else
+						{
+							int result;
+							String query = "insert into IssuedMaster (bookid, studentid, dateissued,datereturn) values("+BookId+","+StudentId+",'"+DateIssued+"','"+DateReturn+"')";
+							//System.out.println(query);
+							try
+							{
+								result = st.executeUpdate(query);
+								if (result == 1)
+								{
+									//System.out.println(query);
+									JOptionPane.showMessageDialog(this,"Book Issued.","Issued",JOptionPane.INFORMATION_MESSAGE);
+									dispose();
+								}	
+									
+								}
+								catch (SQLException sqle)
+								{
+									System.out.println(sqle.getMessage());
+								}
+													
+							}
+
+					}
+					catch(Exception e)
+					{
+						System.out.println("Error in selecting " + e.getMessage());
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(this,"Enter book issue date and return date","Dates Error",JOptionPane.ERROR_MESSAGE);
+
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(this,"Please First Find Book and Student","Required Information",JOptionPane.ERROR_MESSAGE);
+			}
+
+			return;
+		}
+	}
+
+}
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+public class BookReturn extends JInternalFrame implements ActionListener
+{
+	Container cp;
+	JLabel lblReturnBook, lblBookId, lblBookName,lblStudentId,lblIssuedDate,lblReturnDate,lblStudentName,lblDaysLate,lblFine;
+	JTextField txtBookId,txtBookName,txtStudentId,txtIssuedDate,txtReturnDate,txtStudentName,txtDaysLate,txtFine;
+	JButton btnReturnBook, btnCancel,btnIBookFind;
+
+	Connection con;
+	Statement st;
+	ResultSet rs;
+
+	public BookReturn(Connection con)
+	{
+	    this.con=con;
+		cp=getContentPane();
+		setSize(600,600);
+		setLayout(null);
+		setTitle("Book Return");
+
+		ImageIcon image = new ImageIcon("images/bookreturn.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+
+
+		lblBookId=new JLabel("Enter Book Id :");
+		lblBookName=new JLabel("Book Name     :");
+		lblStudentId=new JLabel("Student Id :");
+		lblStudentName=new JLabel("Student Name");
+		lblIssuedDate=new JLabel("Issed Date :");
+		lblReturnDate=new JLabel("Return Date :");
+        
+		lblDaysLate=new JLabel("Day's Late :");
+		lblFine=new JLabel("FINE 10 Rs per day:");
+
+
+		
+		txtBookId=new JTextField(15);
+		txtBookName=new JTextField(15);
+	    txtBookName.setEnabled(false);
+		txtStudentId=new JTextField(15);
+		txtStudentId.setEnabled(false);
+		txtStudentName=new JTextField(15);
+		txtStudentName.setEnabled(false);
+		txtIssuedDate=new JTextField(15);
+		txtIssuedDate.setEnabled(false);
+		txtReturnDate=new JTextField(15);
+		txtReturnDate.setEnabled(false);
+		
+		txtDaysLate=new JTextField(15);
+		txtFine=new JTextField(15);
+
+		btnReturnBook=new JButton("Return");
+	    btnCancel=new JButton("Cancel");
+        btnIBookFind=new JButton("Find Book");
+
+		
+
+		Font f=new Font("Times New Roman",Font.BOLD,14);
+		lblBookId.setFont(f);
+		Color c1=new Color(250,50,50);
+		lblBookId.setForeground(c1);
+		
+		
+		
+		lblBookId.setBounds(100, 100, 200, 25);
+	    txtBookId.setBounds(240, 100, 150, 25);
+	    
+		lblBookName.setBounds(100, 130, 200, 25);
+	    txtBookName.setBounds(240, 130, 150, 25);
+	    
+		lblStudentId.setBounds(100, 160, 200, 25);
+        txtStudentId.setBounds(240, 160, 150, 25);
+	    
+		lblStudentName.setBounds(100,190,150,25);
+		txtStudentName.setBounds(240,190,150,25);
+
+		
+		
+		lblIssuedDate.setBounds(100,220,150,25);
+        txtIssuedDate.setBounds(240,220,150,25);
+		
+		lblReturnDate.setBounds(100,250,150,25);
+		txtReturnDate.setBounds(240,250,150,25);
+		
+		lblDaysLate.setBounds(100,280,150,25);
+		txtDaysLate.setBounds(240,280,150,25);
+
+		lblFine.setBounds(100,310,150,25);
+		txtFine.setBounds(240,310,150,25);
+
+
+		
+		btnIBookFind.setBounds(220,360,90,25);
+		btnReturnBook.setBounds(320,360,90,25);
+		btnCancel.setBounds(420,360,90,25);
+
+		cp.add (lblBookId);
+		cp.add (txtBookId);
+		cp.add (lblBookName);
+		cp.add (txtBookName);
+		cp.add (lblStudentId);
+		cp.add (txtStudentId);
+
+		cp.add (lblStudentName);
+		cp.add (txtStudentName);
+
+		cp.add (lblIssuedDate);
+		cp.add (txtIssuedDate);
+
+		cp.add (lblReturnDate);
+		cp.add (txtReturnDate);
+		cp.add (btnIBookFind);
+		cp.add (btnReturnBook);
+		cp.add (btnCancel);
+		cp.add (lblDaysLate);
+		cp.add (txtDaysLate);
+		cp.add (lblFine);
+		cp.add (txtFine);
+		setClosable (true);
+		setResizable (false);
+		setMaximizable (false);
+		setIconifiable (true);
+		setVisible (true);
+		btnIBookFind.addActionListener(this);
+		btnCancel.addActionListener(this);
+		btnReturnBook.addActionListener(this);
+	}
+		
+	public void actionPerformed(ActionEvent ae)
+	{
+		String bid=txtBookId.getText();
+		if(ae.getSource()==btnIBookFind)
+		{
+		
+			if (bid.length() > 0)
+			{
+				try
+				{
+					int b = Integer.parseInt(bid);
+					String query = "select bookmaster.bookname, bookmaster.bookid, studentmaster.studentname, studentmaster.studentid, format(IssuedMaster.dateissued, 'dd/mm/yyyy') as dateissued, format(IssuedMaster.datereturn, 'dd/mm/yyyy') as datereturn, DateDiff('d', datereturn, Now ) as date_diff from IssuedMaster, BookMaster, StudentMaster where IssuedMaster.bookid=" + b + " and IssuedMaster.studentid=studentmaster.studentid and BookMaster.bookid=IssuedMaster.bookid";
+					//System.out.println(query);
+					try
+					{
+						st = con.createStatement();
+						rs = st.executeQuery(query);
+						if (rs.next())
+						{				
+							String sid=rs.getString("studentid");
+							String dateissued=rs.getString("dateissued");
+							String datereturn=rs.getString("datereturn");
+							String bookName = rs.getString("bookname");
+							String studentName = rs.getString("studentname");
+							int dateDiff = rs.getInt("date_diff");
+							String fine = "None";
+							int daysLate = 0;
+							//System.out.println(dateDiff);
+							txtStudentId.setText(sid);
+							txtStudentName.setText(studentName);
+							txtBookName.setText(bookName);
+							txtIssuedDate.setText(dateissued);
+							txtReturnDate.setText(datereturn);
+							if (dateDiff > 0)
+							{
+								
+								daysLate = dateDiff;
+								fine = Integer.toString(10 * daysLate);
+							}
+							
+							txtDaysLate.setText(Integer.toString(daysLate));
+							txtFine.setText(fine);
+							
+						
+						}
+						else
+						{	
+
+							JOptionPane.showMessageDialog(this,"This book id does not exist","Wrong Id",JOptionPane.INFORMATION_MESSAGE);
+							dispose();
+						}
+						rs.close();
+						
+					}
+					catch (SQLException sqle)
+					{
+						System.out.println(query);
+					}
+				}
+				catch (NumberFormatException nfe)
+				{
+					JOptionPane.showMessageDialog(this,"ID must be numeric","Invaid ID",JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(this,"Please Fill Book Id.","Required Information",JOptionPane.ERROR_MESSAGE);
+			}
+			return;
+		}
+		else if(ae.getSource()==btnCancel)
+		{
+			setVisible (false);
+			dispose();
+		}		
+	    else if(ae.getSource()==btnReturnBook)
+		{
+			String bbid=txtBookId.getText();
+			String sid=txtStudentId.getText();
+			if (sid.length() > 0 && bbid.length() > 0)
+			{
+				try
+				{
+					int bb = Integer.parseInt(bbid);
+					st = con.createStatement();
+					int delete = st.executeUpdate("delete from IssuedMaster where bookid=" + bb );
+				 
+					if (delete == 1)
+					{
+						JOptionPane.showMessageDialog(this,"Book was Returned.","Book Returned",JOptionPane.INFORMATION_MESSAGE);
+						dispose();
+					}	
+		        }
+		        catch (SQLException sqle)
+				{
+					System.out.println(sqle);
+				}			
+			   catch (NumberFormatException nfe)
+			   {
+				JOptionPane.showMessageDialog(this,"ID must be numeric","Invaid ID",JOptionPane.INFORMATION_MESSAGE);
+			   }
+		   
+		   }
+		  else
+		  {
+              
+			 JOptionPane.showMessageDialog(this,"Please Find Book By ID First Then Return Book.","Find Book",JOptionPane.ERROR_MESSAGE);
+				
+		  }
+							
+		}
+	}
+}
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+public class changePassword extends JInternalFrame implements ActionListener
+{
+     Container cp;
+	 JLabel lblChangePassword,lblUserName,lblOldPassword, lblNewPassword;
+	 JTextField txtUserName;
+	 JPasswordField txtOldPassword,txtNewPassword;
+	 JButton btnChangePassword, btnCancel;
+     
+	 Connection con;
+	 Statement st;
+	 ResultSet rs;
+	 
+	 public changePassword(Connection con)
+	 {
+		this.con = con;
+		
+		cp=getContentPane();
+		setSize(500,500);
+		setLayout(null);
+        ImageIcon image = new ImageIcon("images/changepassword.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+		
+		
+		
+	    lblUserName=new JLabel("Enter user name          :");
+		lblOldPassword=new JLabel("Enter Old Password    :");
+	    lblNewPassword=new JLabel("Enter New Password  :");
+
+		txtUserName=new JTextField(15);
+		txtOldPassword=new JPasswordField(15);
+		txtNewPassword=new JPasswordField(15);
+	    btnChangePassword=new JButton("Change");
+		btnCancel=new JButton("Cancel");
+	   
+	    lblUserName.setBounds(100,100,200,25);
+		txtUserName.setBounds(250,100,150,25);
+		lblOldPassword.setBounds(100,130,200,25);
+		txtOldPassword.setBounds(250,130,150,25);
+		lblNewPassword.setBounds(100,160,150,25);
+		txtNewPassword.setBounds(250,160,150,25);
+		
+		btnChangePassword.setBounds(200,200,80,25);
+		btnCancel.setBounds(300,200,80,25);
+	   
+		cp.add(lblUserName);
+		cp.add(txtUserName);
+		cp.add(lblOldPassword);
+		cp.add(txtOldPassword);
+		cp.add(lblNewPassword);
+		cp.add(txtNewPassword);
+		cp.add(btnChangePassword);
+		cp.add(btnCancel);
+		setLocation(100,75);
+		setTitle("Change password");
+		setClosable(true);
+		setResizable(false);
+		setMaximizable(false);
+		setIconifiable(true);
+		setVisible(true);
+		btnChangePassword.addActionListener(this);
+		btnCancel.addActionListener(this);
+		}
+	  public void actionPerformed(ActionEvent ae)
+	    {
+
+			String u=txtUserName.getText();
+			String p= new String (txtOldPassword.getPassword());
+	        String newPass =new String(txtNewPassword.getPassword());
+	        if(ae.getSource()==btnChangePassword)
+			{
+	        if (u.length() > 0 && p.length() > 0 && newPass.length() >0)
+		     {
+					try
+					{
+	                    st = con.createStatement();
+					    rs = st.executeQuery("select id from userTable where user='" + u + "' AND  pass='" + p +"'");
+					    if (rs.next())
+						{
+						   st = con.createStatement();
+						   int insert = st.executeUpdate("Update UserTable " + " set pass='" + newPass + "' where user='" + u + "' AND  pass ='" + p + "'");
+	                       if (insert == 1)                                                        
+						   {				
+							JOptionPane.showMessageDialog(this,"Your Password is changed","Change Password",JOptionPane.INFORMATION_MESSAGE);
+						    dispose();
+						   }
+					    }
+						else
+						{	
+					        JOptionPane.showMessageDialog(this,"User Does not exist","Wrong User Name",JOptionPane.INFORMATION_MESSAGE);
+						    rs.close();
+						}
+					}
+					catch (SQLException sqle)
+					{
+						System.out.println(sqle);
+					}
+				 }
+				 else
+				 {
+	 				JOptionPane.showMessageDialog(this,"Please enter  username and old password and new password","Required Information",JOptionPane.ERROR_MESSAGE);
+				 }
+				 return;
+
+				}
+			    else if(ae.getSource()==btnCancel)
+			    {
+				setVisible (false);
+				dispose();
+			    }
+			
+			    }
+		   }
+
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+public class DeleteBook extends JInternalFrame implements ActionListener
+{
+	private Container cp;
+	private JLabel lblBookId,lblBookName, lblBookAuthor,lblBookCategory;
+	private JTextField txtBookId,txtBookCategory,txtBookName,txtBookAuthor;
+	private JButton btnDeleteBook, btnCancel,btnFindBook;
+	
+	Connection con;
+	Statement st;
+	ResultSet rs;
+	
+	
+	
+	public DeleteBook(Connection con)
+	    {
+	    this.con=con;
+		cp=getContentPane();
+		setSize(600,600);
+		setLayout(null);
+		setTitle("Delete Book");
+		//lblDeleteBook=new JLabel("Delete Book",Label.LEFT);
+		ImageIcon image = new ImageIcon("images/deleteBook.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+		
+		lblBookId=new JLabel("Enter Book Id :");
+		lblBookName=new JLabel(" Book Name         :");
+		lblBookAuthor=new JLabel(" Author Name      :");
+		lblBookCategory=new JLabel(" Book Category   :");
+		txtBookName=new JTextField(15);
+		txtBookAuthor=new JTextField(15);
+		txtBookId=new JTextField(15);
+		txtBookCategory=new JTextField(15);
+		
+		btnFindBook=new JButton("Find Book");
+		btnDeleteBook=new JButton("Delete");
+	    btnCancel=new JButton("Cancel");
+
+		 Font f=new Font("Time New Roman",Font.BOLD,13);
+	     lblBookId.setFont(f);
+	     Color c1=new Color(250,50,50);
+	     lblBookId.setForeground(c1);
+	    
+		 
+		 lblBookId.setBounds(100, 100, 200, 25);
+		 txtBookId.setBounds(240, 100, 150, 25);
+		 
+		 lblBookName.setBounds(100, 130, 200, 25);
+	     txtBookName.setBounds(240, 130, 150, 25);
+	     txtBookName.setEnabled(false);
+		 lblBookAuthor.setBounds(100, 160, 200, 25);
+	     txtBookAuthor.setBounds(240, 160, 150, 25);
+	     txtBookAuthor.setEnabled(false);
+		 lblBookCategory.setBounds(100, 190, 150, 25);
+         txtBookCategory.setBounds(240, 190, 150, 25);
+	     txtBookCategory.setEnabled(false);
+		 btnFindBook.setBounds(100,250,90,25);
+		 btnDeleteBook.setBounds(220,250,90,25);
+         btnCancel.setBounds(340,250,90,25);
+
+		// cp.add (lblDeleteBook);
+         
+		 cp.add(lblBookId);
+		 cp.add(txtBookId);
+		 cp.add (lblBookName);
+	     cp.add (txtBookName);
+	     cp.add (lblBookAuthor);
+	     cp.add (txtBookAuthor);
+	     cp.add (lblBookCategory);
+         cp.add (txtBookCategory);
+	    
+	     
+		 cp.add(btnFindBook);
+		 cp.add (btnDeleteBook);
+	     cp.add (btnCancel);
+	     setClosable (true);
+	     setResizable (false);
+	     setMaximizable (false);
+	     setIconifiable (true);
+	     setVisible (true);
+	     setLocation(0,75);
+		 btnFindBook.addActionListener(this);
+		 btnDeleteBook.addActionListener(this);
+		 btnCancel.addActionListener(this);
+		 
+	
+	}
+	public void actionPerformed(ActionEvent ae)
+	{       
+		    String bid=txtBookId.getText();
+	        
+			if(ae.getSource()==btnFindBook)
+			{   
+				 if (bid.length() > 0 )
+				 {
+					try
+						 {
+						 int b = Integer.parseInt(bid);		
+						 
+							 try
+							   {
+									st = con.createStatement();
+									rs = st.executeQuery("select * from BookMaster where BookId=" + b );
+									if (rs.next())    
+									{				
+										String bname=rs.getString("BookName");
+										String bauthor=rs.getString("BookAuth");
+										String category=rs.getString("BookCatID");
+										
+										txtBookName.setText(bname);
+										txtBookAuthor.setText(bauthor);
+										txtBookCategory.setText(category);
+										
+									}
+									else
+									{	
+										
+										JOptionPane.showMessageDialog(this,"This Book id does not exist","Wrong Id",JOptionPane.INFORMATION_MESSAGE);
+										dispose();
+								}
+								rs.close();
+							
+						   }
+								catch (SQLException sqle)
+					            {
+						        System.out.println(sqle);
+					            } 
+				          }
+							catch (NumberFormatException nfe)
+							{
+								JOptionPane.showMessageDialog(this,"ID must be numeric","Invaid ID",JOptionPane.INFORMATION_MESSAGE);
+							}
+						}
+							
+				else
+				{
+					JOptionPane.showMessageDialog(this,"Please Fill Book Id.","Required Information",JOptionPane.ERROR_MESSAGE);
+				}
+				return;
+				}				
+				else if(ae.getSource()==btnCancel)
+				{
+					setVisible (false);
+					dispose();
+				}							
+				else if(ae.getSource()==btnDeleteBook)
+				{
+					String bbid=txtBookId.getText();
+					String n=lblBookName.getText();
+					if (bbid.length() > 0 && n.length() > 0)
+					{
+						try
+						{
+								int bb = Integer.parseInt(bbid);
+								st = con.createStatement();
+								int delete = st.executeUpdate("delete from BookMaster where BookId=" + bb );
+								int del =st.executeUpdate("delete from IssuedMaster where bookid =" + bb);
+								if (delete == 1)
+								{
+								JOptionPane.showMessageDialog(this,"Book was Deleted.","Book Deleted",JOptionPane.INFORMATION_MESSAGE);
+								dispose();
+								}	
+						}
+						catch (SQLException sqle)
+								{
+									System.out.println(sqle);
+								}
+					
+						   catch (NumberFormatException nfe)
+						   {
+							JOptionPane.showMessageDialog(this,"Book ID must be numeric","Invaid ID",JOptionPane.INFORMATION_MESSAGE);
+						   }
+				   
+				   }
+				  else
+					 {
+					  
+					  JOptionPane.showMessageDialog(this,"Please Find Book By ID First Then Delete Book if Exist.","Find Student",JOptionPane.ERROR_MESSAGE);
+						
+					 }
+									
+			}
+      }
+}								
+								
+								
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+public class deleteBookCatagory extends JInternalFrame implements ActionListener
+{
+	private Container cp;
+	private JLabel lblDeleteCatagory, lblDeleteBook;
+	private JTextField txtDeleteBook;
+	private JButton btnDeleteBook, btnCancel;
+
+    Connection con;
+	Statement st;
+	ResultSet rs;   
+	
+	
+	public deleteBookCatagory(Connection con)
+	    {
+		this.con=con;
+	    cp=getContentPane();
+		setSize(600,400);
+		setLayout(null);
+		ImageIcon image = new ImageIcon("images/deletebookcategory.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+		//lblDeleteCatagory=new JLabel("Delete Books Catagory",Label.LEFT);
+		lblDeleteBook=new JLabel("Enter Book Catagory :");
+        txtDeleteBook=new JTextField(15);
+		btnDeleteBook=new JButton("Delete");
+		btnCancel=new JButton("Cancel");
+		//Font f=new Font("Arial",Font.BOLD,30);
+		//lblDeleteCatagory.setFont(f);
+		//Color c1=new Color(250,50,50);
+		//lblDeleteCatagory.setForeground(c1);
+		//lblDeleteCatagory.setBounds(60,20,350,35);
+		lblDeleteBook.setBounds(100,100,200,25);
+		txtDeleteBook.setBounds(240,100,150,25);
+		btnDeleteBook.setBounds(240,150,80,25);
+		btnCancel.setBounds(340,150,80,25);
+		//cp.add(lblDeleteCatagory);
+		cp.add(lblDeleteBook);
+		cp.add(txtDeleteBook);
+		cp.add(btnDeleteBook);
+		cp.add(btnCancel);
+		setLocation(50,50);
+		setTitle("Delete Book Catagory");
+		setClosable(true);
+		setResizable(false);
+		setMaximizable(false);
+		setIconifiable(true);
+		setVisible(true);
+		setLocation(0,75);
+		btnDeleteBook.addActionListener(this);
+		btnCancel.addActionListener(this);
+		}
+		
+		 public void actionPerformed(ActionEvent ae)
+	    {
+         String sbook=txtDeleteBook.getText();
+        
+		  if(ae.getSource()==btnDeleteBook)
+			{
+			    if (sbook.length() > 0 )
+		      { 
+					
+					try
+					{
+                        st = con.createStatement();
+		                rs = st.executeQuery("select BookCatID from BookCatagory where BookCat ='" + sbook + "'");
+                        if (rs.next())
+						{		
+		                    int Delete;
+						    Delete=st.executeUpdate("Delete from BookCatagory  where BookCat='" + sbook + "'");   
+						    if (Delete == 1)
+							{
+								JOptionPane.showMessageDialog(this,"Book Catagory was Deleted.","Book Catagory Deleted",JOptionPane.INFORMATION_MESSAGE);
+								dispose();
+							}
+		
+		                }
+                        else
+						{	
+                            
+						JOptionPane.showMessageDialog(this,"This Catagory Does Not Exist in Database ","Catagory Does not Exists",JOptionPane.ERROR_MESSAGE);
+						}
+		               rs.close();
+						
+			       }
+		        catch (SQLException sqle)
+					{
+						System.out.println(sqle.getMessage());
+					}
+			  }
+		      else
+		         {
+	 	         JOptionPane.showMessageDialog(this,"Please enter Book Catagory which you want to Delete","Required Information",JOptionPane.INFORMATION_MESSAGE);
+		         }
+				 return;
+
+
+		    }
+		    else if(ae.getSource()==btnCancel)
+		      {
+				setVisible (false);
+				dispose();
+		      }
+
+	}
+
+}
+
+		
+		
+		
+	
+ 
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+public class DeleteStudent extends JInternalFrame implements ActionListener
+{
+	private Container cp;
+	private JLabel  lblDeleteStudentId, lblDeleteStudentName,lblDeleteStudentClass,lblStudentAddress,lblStudentSecurity;
+	private JTextField txtDeleteStudentId,txtDeleteStudentName,txtDeleteStudentClass,txtStudentAddress,txtStudentSecurity;
+	private JButton btnDeleteStudent, btnCancel,btnFindStudent;
+   
+    Connection con;
+	Statement st;
+	ResultSet rs;   
+
+		
+		public DeleteStudent(Connection con)
+	    {
+		this.con = con;
+	    cp=getContentPane();
+		setSize(600,500);
+		setLayout(null);
+		ImageIcon image = new ImageIcon("images/deletestudentrecord.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+		lblDeleteStudentId=new JLabel("Enter Student Id:");
+		lblDeleteStudentName=new JLabel("Student Name       :");
+		lblDeleteStudentClass=new JLabel("Student Class :");
+		lblStudentAddress=new JLabel("Student Address :");
+		lblStudentSecurity=new JLabel("Student Security :");
+		
+		txtDeleteStudentId=new JTextField(15);
+		txtDeleteStudentName=new JTextField(15);
+		txtDeleteStudentClass=new JTextField(15);
+		txtStudentAddress=new JTextField(15);
+		txtStudentSecurity=new JTextField(15);
+		
+		btnFindStudent=new JButton("Find Student");
+		btnDeleteStudent=new JButton("Delete");
+		btnCancel=new JButton("Cancel");
+		
+        Font f=new Font("Times New Roman",Font.BOLD,14);
+		lblDeleteStudentId.setFont(f);
+		Color c1=new Color(250,50,50);
+		lblDeleteStudentId.setForeground(c1);
+		
+		
+		
+		lblDeleteStudentId.setBounds(100,100,200,25);
+		txtDeleteStudentId.setBounds(240,100,150,25);
+		lblDeleteStudentName.setBounds(100,130,200,25);
+		txtDeleteStudentName.setBounds(240,130,150,25);
+		txtDeleteStudentName.setEnabled(false);
+		lblDeleteStudentClass.setBounds(100,160,200,25);
+		txtDeleteStudentClass.setBounds(240,160,150,25);
+		txtDeleteStudentClass.setEnabled(false);
+		lblStudentAddress.setBounds(100,190,200,25);
+		txtStudentAddress.setBounds(240,190,150,25);
+		txtStudentAddress.setEnabled(false);
+		lblStudentSecurity.setBounds(100,220,200,25);
+		txtStudentSecurity.setBounds(240,220,150,25);
+        txtStudentSecurity.setEnabled(false);
+		
+		
+		btnFindStudent.setBounds(100,290,110,25);
+		btnDeleteStudent.setBounds(220,290,100,25);
+		btnCancel.setBounds(330,290,100,25);
+		txtDeleteStudentId.setToolTipText("Enter Student Id");
+		txtDeleteStudentName.setToolTipText(" Student Name");
+
+		
+		cp.add(lblDeleteStudentId);
+		cp.add(txtDeleteStudentId);
+		cp.add(lblDeleteStudentName);
+		cp.add(txtDeleteStudentName);
+		cp.add(lblDeleteStudentClass);
+		cp.add(txtDeleteStudentClass);
+		cp.add(lblStudentAddress);
+		cp.add(txtStudentAddress);
+		cp.add(lblStudentSecurity);
+		
+		cp.add(txtStudentSecurity);
+		cp.add(btnDeleteStudent);
+		cp.add(btnFindStudent);
+		cp.add(btnCancel);
+		setLocation(50,50);
+		setTitle("Delete Student");
+		setClosable(true);
+		setResizable(false);
+		setMaximizable(false);
+		setIconifiable(true);
+		setVisible(true);
+		setLocation(0,75);
+		btnDeleteStudent.addActionListener(this);
+		btnCancel.addActionListener(this);
+	    btnFindStudent.addActionListener(this);
+	}
+
+        public void actionPerformed(ActionEvent ae)
+	    {
+         String sid=txtDeleteStudentId.getText();
+         if(ae.getSource()==btnFindStudent)
+		 {
+			   txtDeleteStudentId.setEnabled(false);
+			   if (sid.length() > 0)
+		       { 
+				 try
+				 {
+					int studentID = Integer.parseInt(sid);				
+					
+					try
+					{
+                        st = con.createStatement();
+					 	                    
+						rs = st.executeQuery("select * from StudentMaster where StudentID=" + sid );
+                        if (rs.next())
+						{				
+							
+						    String name=rs.getString("StudentName");
+							String cla=rs.getString("StudentClass");
+							String address=rs.getString("StudentAddress");
+                            String security=rs.getString("StudentSecurity");
+							txtDeleteStudentName.setText(name);
+							txtDeleteStudentClass.setText(cla);
+							txtStudentAddress.setText(address);
+                            txtStudentSecurity.setText(security);
+							
+						}
+						else
+						{	
+
+							JOptionPane.showMessageDialog(this,"This Student id does not exist","Wrong Id",JOptionPane.INFORMATION_MESSAGE);
+							dispose();
+						}
+						rs.close();
+						
+					
+				}
+					catch (SQLException sqle)
+					{
+						System.out.println(sqle);
+					}
+				}
+				catch (NumberFormatException nfe)
+				{
+					JOptionPane.showMessageDialog(this,"ID must be numeric","Invaid ID",JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+							
+			else
+			{
+				JOptionPane.showMessageDialog(this,"Please Fill Book Id.","Required Information",JOptionPane.ERROR_MESSAGE);
+			}
+			return;
+		}				
+		else if(ae.getSource()==btnCancel)
+		{
+			setVisible (false);
+			dispose();
+		}							
+		else if(ae.getSource()==btnDeleteStudent)
+		{
+			String ssid=txtDeleteStudentId.getText();
+			String n=lblDeleteStudentName.getText();
+			if (ssid.length() > 0 && n.length() > 0)
+			{
+				try
+				{
+						int ss = Integer.parseInt(ssid);
+						st = con.createStatement();
+						int delete = st.executeUpdate("delete from StudentMaster where StudentID=" + ss );
+					    int del =st.executeUpdate("delete from IssuedMaster where studentid=" + ss);
+						if (delete == 1)
+						{
+						JOptionPane.showMessageDialog(this,"Student was Deleted.","Student Deleted",JOptionPane.INFORMATION_MESSAGE);
+						dispose();
+						}	
+		        }
+		        catch (SQLException sqle)
+						{
+							System.out.println(sqle);
+						}
+			
+				   catch (NumberFormatException nfe)
+				   {
+					JOptionPane.showMessageDialog(this,"ID must be numeric","Invaid ID",JOptionPane.INFORMATION_MESSAGE);
+				   }
+		   
+		   }
+		  else
+		     {
+              
+			  JOptionPane.showMessageDialog(this,"Please Find Student By ID First Then Delete Student.","Find Student",JOptionPane.ERROR_MESSAGE);
+				
+			 }
+							
+		  }
+	   }
+}					
+							
+							
+							
+							
+							
+							
+		
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.Connection;
+
+public class Library extends JFrame implements ActionListener
+{
+	Container c;
+	JMenuBar mb;
+	JMenu file,edit,bookSearch,options,help;
+	JMenuItem newAdminUser,changePass,exit;
+	JMenuItem issueBook,returnBook,addBook,deleteBook;
+	JMenuItem miSearch;
+	JMenuItem addNewBookCatagory,deleteBookCatagory,addNewStudent,deleteOldStudent;
+	JMenuItem aboutLibrarySystem;
+	JDesktopPane jkp=new JDesktopPane();
+	Connection con;
+	
+	public Library(Connection con)
+	{
+		this.con = con;
+		c=getContentPane();
+		
+		setSize(700,700);
+		c.setLayout(new BorderLayout());
+		setTitle("Library Management System.");
+		setIconImage (getToolkit().getImage ("images/book.gif"));
+		
+		ImageIcon image = new ImageIcon("images/main.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    jkp.add(background,jkp.FRAME_CONTENT_LAYER,0);
+	    
+		mb=new JMenuBar();
+		file=new JMenu("File");
+		file.setMnemonic('F');
+		newAdminUser=new JMenuItem("New Admin User");
+		newAdminUser.setMnemonic('N');
+		changePass=new JMenuItem("Change Password");
+		changePass.setMnemonic('C');
+		exit=new JMenuItem("Exit");
+		exit.setMnemonic('E');
+		file.add(newAdminUser);
+		
+		file.add(changePass);
+		file.addSeparator();
+		file.add(exit);
+		mb.add(file);
+		edit=new JMenu("Edit");
+		edit.setMnemonic('E');
+		issueBook=new JMenuItem("Issue Book");
+		issueBook.setMnemonic('I');
+		returnBook=new JMenuItem("Return Book");
+		returnBook.setMnemonic('R');
+		
+		addBook=new JMenuItem("Add Book");
+		deleteBook=new JMenuItem("Delete Book");
+		
+		edit.add(issueBook);
+		edit.add(returnBook);
+		edit.addSeparator();
+		edit.add(addBook);
+		
+		edit.add(deleteBook);
+		mb.add(edit);
+		
+		bookSearch=new JMenu("Search");
+		bookSearch.setMnemonic('S');
+		miSearch=new JMenuItem("Book");
+        miSearch.setMnemonic('B');
+		bookSearch.add(miSearch);
+		
+		mb.add(bookSearch);
+		
+		options=new JMenu("Options");
+		options.setMnemonic('O');
+		addNewBookCatagory=new JMenuItem("Add New Book Category");
+		addNewBookCatagory.setMnemonic('A');
+
+		deleteBookCatagory=new JMenuItem("Delete Book Category");
+
+		deleteBookCatagory.setMnemonic('D');
+		
+		addNewStudent=new JMenuItem("Add New Student");
+		addNewStudent.setMnemonic('N');
+		deleteOldStudent=new JMenuItem("Delete Old Student");
+		deleteOldStudent.setMnemonic('O');
+		options.add(addNewBookCatagory);
+		options.addSeparator();
+		options.add(deleteBookCatagory);
+		options.addSeparator();
+		options.add(addNewStudent);
+		options.addSeparator();
+		options.add(deleteOldStudent);
+		mb.add(options);
+		help=new JMenu("Help");
+		help.setMnemonic('H');
+		aboutLibrarySystem=new JMenuItem("About Library System");
+		aboutLibrarySystem.setMnemonic('L');
+		help.add(aboutLibrarySystem);
+		mb.add(help);
+		setJMenuBar(mb);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		c.add(jkp,BorderLayout.CENTER);
+		Color c1=new Color(224,228,229);
+		jkp.setBackground(c1);
+		setVisible(true);
+		setLocation(50,50);
+		newAdminUser.addActionListener(this);
+	    changePass.addActionListener(this);
+	    exit.addActionListener(this);
+	    addNewBookCatagory.addActionListener(this);
+	    addNewStudent.addActionListener(this);
+	    deleteOldStudent.addActionListener(this);
+	    deleteBookCatagory.addActionListener(this);
+	    addBook.addActionListener(this);
+	    deleteBook.addActionListener(this);
+	    miSearch.addActionListener(this);
+	    issueBook.addActionListener(this);
+	    returnBook.addActionListener(this);
+	    aboutLibrarySystem.addActionListener(this);
+	}
+
+	public void actionPerformed(ActionEvent e)
+	{
+		if(e.getSource()==newAdminUser)
+		{
+	boolean exists = isWindowOpen ("Add new user");
+			if (exists == false)
+			{
+		AddUser u=new AddUser(con);
+				jkp.add(u);	
+			}		
+		}
+	else if(e.getSource()==changePass)
+		{
+	       boolean exists = isWindowOpen ("Change Password");
+		   if (exists == false)
+		{
+		        changePassword c=new changePassword(con);
+		        jkp.add(c);
+		}
+		}
+	else if(e.getSource()==exit)
+		{
+		dispose();
+		}
+	else if(e.getSource()==addNewStudent)
+		{
+	       boolean exists = isWindowOpen ("Student Registration");
+		   if (exists == false)
+			{
+	         AddStudent a = new AddStudent(con);
+		     jkp.add(a);
+			}
+		}
+	else if(e.getSource()==addNewBookCatagory)
+		{
+		
+		   boolean exists = isWindowOpen ("Add Book Catagory");
+		   if (exists == false)
+		     {
+		        AddBookCatagory add=new AddBookCatagory(con);
+		        jkp.add(add);
+		     }
+		}
+	else if(e.getSource()==deleteOldStudent)
+	    {
+	     boolean exists = isWindowOpen ("Delete Student");
+		 if (exists == false)
+		     {
+		        DeleteStudent delete=new DeleteStudent(con);
+		        jkp.add(delete);
+		    }
+	   }
+	
+	else if(e.getSource()==deleteBookCatagory)
+		{
+		boolean exists = isWindowOpen ("Delete Book Catagory");
+		if (exists == false)
+	        {
+		        deleteBookCatagory delete=new  deleteBookCatagory(con);
+		        jkp.add(delete);
+		    }
+	   }
+	
+	else if(e.getSource()==addBook)
+		{
+		boolean exists=isWindowOpen("Add New Book");
+		if(exists == false)
+			{
+			   AddNewBook add=new AddNewBook(con);
+			   jkp.add(add);
+			}
+		}
+	else if(e.getSource()==deleteBook)
+		{
+		boolean exists=isWindowOpen("Delete Book");
+		if(exists==false)
+			{
+			DeleteBook delete=new DeleteBook(con);
+			jkp.add(delete);
+			}
+		}
+	else if(e.getSource()==miSearch)
+		{
+	    boolean exists=isWindowOpen("Search Book");
+		if(exists==false)
+	        {
+		    SearchBook search=new SearchBook(con);
+			
+			jkp.add(search);
+			search.toFront();
+		    }
+	    }
+	else if(e.getSource()==issueBook)
+		{
+		boolean exists=isWindowOpen("Issue Book");
+		if(exists==false)
+			{
+		   BookIssue issue=new BookIssue(con);
+		   
+		   jkp.add(issue);
+		   issue.toFront();
+			}
+		}
+	else if(e.getSource()==returnBook)
+		{
+		boolean exists=isWindowOpen("Book Return");
+		if(exists==false)
+			{
+			BookReturn r = new BookReturn(con);
+		    
+			jkp.add(r);
+			r.toFront();
+			}
+		}
+	
+	else if(e.getSource()==aboutLibrarySystem)
+		{
+	    boolean exists=isWindowOpen("library");
+		if(exists==false)
+			{
+			about m=new about();
+		    jkp.add(m);
+			}
+		}
+	
+	}
+
+
+	private boolean isWindowOpen (String title)
+	{
+
+		JInternalFrame[] iframes = jkp.getAllFrames ();		
+		for (int i = 0; i < iframes.length; i++)
+		{
+	if (iframes[i].getTitle().equalsIgnoreCase (title))
+			{	
+				iframes[i].toFront();
+				return true;
+			}
+		}
+		return false;
+	}
+
+}
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package librarymgt;
+
+/**
+ *
+ * @author divanand
+ */
+public class LibraryMgt {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+    
+    }
+    
+}
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+public class Login extends JFrame implements ActionListener
+{
+	JLabel lblUserName, lblPassword;
+	JTextField login;
+	JPasswordField pass;
+	JButton enter, cancel;
+	String u, p;
+    
+	Connection con;
+	Statement st;
+	ResultSet rs;
+
+	public Login()
+	{
+		try
+		{
+			 Class.forName("com.hxtt.sql.access.AccessDriver");
+	  		String url = "jdbc:Access:///data.mdb";
+			con = DriverManager.getConnection(url);
+		}	
+		catch (Exception ee)
+		{
+		JOptionPane.showMessageDialog(this,"Database Error","Database Error",JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+
+		Container c;
+		c=getContentPane();
+		setLayout(null);
+		setSize(500,400);
+		
+		ImageIcon image = new ImageIcon("images/library2.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    c.add(background);
+        setTitle("Library Management System.");
+		setIconImage (getToolkit().getImage ("images/book.gif"));
+		setLocation(300,300);
+		lblUserName = new JLabel("Enter user name : ");
+		lblPassword = new JLabel("Enter Password  : ");
+		login = new JTextField(10);
+		login.setText("div");
+		pass = new JPasswordField(10);
+		pass.setText("anand");
+		enter = new JButton("Enter");
+		cancel = new JButton("Cancel");
+	    lblUserName.setBounds(100,130,200,25);
+		login.setBounds(210,130,150,25);
+		lblPassword.setBounds(100,160,200,25);
+		pass.setBounds(210,160,150,25);
+		enter.setBounds(150,230,80,25);
+		cancel.setBounds(250,230,80,25);
+       
+		c.add(lblUserName);
+		c.add(login);
+		c.add(lblPassword);
+		c.add(pass);
+		c.add(enter);
+		c.add(cancel);
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		enter.addActionListener(this);
+		cancel.addActionListener(this);
+	}
+
+	public void actionPerformed(ActionEvent e)
+	{   
+		if(e.getSource()==enter)
+		{
+			String u = login.getText();
+			String p = new String (pass.getPassword());
+
+			login.setText("");
+			pass.setText("");
+			if (u.length() > 0 && p.length() > 0)
+			{
+				try
+				{
+					st = con.createStatement();
+					rs = st.executeQuery("select id from userTable where user='" + u + "' AND  pass='" + p +"'");
+					if (rs.next())
+					{				
+						rs.close();
+						Library l = new Library(con);
+						dispose();
+					}
+					else
+					{	
+						JOptionPane.showMessageDialog(this,"Your User name and password is wrong","Wrong Password",JOptionPane.ERROR_MESSAGE);
+					} 				
+				}
+				catch (SQLException sqle)
+				{
+					System.out.println(sqle);
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(this,"Please enter your username and password","Required Information",JOptionPane.ERROR_MESSAGE);
+
+			}
+			
+         }
+		else if(e.getSource()==cancel)
+		{
+			dispose();
+		}
+		
+	}
+
+	public static void main(String arg[])
+	{
+		new	Login().setVisible(true);
+	}
+}
+
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.sql.*;
+import javax.swing.table.*;
+
+public class SearchBook extends JInternalFrame implements ActionListener
+{
+     Container cp;
+	 JLabel lblSearchBookByName,lblByName;
+	 JTextField txtByName;
+	 JButton btnSearch, btnCancel;
+	 
+	 Connection con;
+	 Statement st;
+	 ResultSet rs;
+	 JTable table;
+	 ButtonGroup rbGroup;
+	 JRadioButton byBook;
+	 JRadioButton byID;
+	 JRadioButton byAuthor;
+	 JRadioButton byCategory;
+	 int flag;
+
+	   public SearchBook(Connection con)
+	   {
+        this.con=con;
+		cp=getContentPane();
+		setSize(600,650);
+		setLayout(null);
+       
+		ImageIcon image = new ImageIcon("images/searchbook.jpg");
+		JLabel background = new JLabel(image);
+		background.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+	    cp.add(background);
+		lblByName =new JLabel("Enter Here  :");
+		txtByName=new JTextField(20);
+		btnSearch=new JButton("Search");
+		btnCancel=new JButton("Cancel");
+		
+        Font f=new Font("Impact",Font.BOLD,13);
+		lblByName.setFont(f);
+		Color c1=new Color(250,50,50);
+		lblByName.setForeground(c1);
+		
+		
+		
+		lblByName.setBounds(120,140,150,25);
+		txtByName.setBounds(220,140,150,25);
+		
+	    btnSearch.setBounds(200,180,80,25);
+		btnCancel.setBounds(300,180,80,25);
+        
+		
+		cp.add(lblByName);
+		cp.add(txtByName);
+		cp.add(btnSearch);
+		cp.add(btnCancel);
+
+		byBook = new JRadioButton("byName");
+		byBook.setBounds(90,90,80,50);
+		byBook.setMnemonic(KeyEvent.VK_N);
+		byBook.setSelected(true);
+		byBook.addActionListener(this);
+
+		byID = new JRadioButton("byID");
+		byID.setMnemonic(KeyEvent.VK_I);
+		byID.setBounds(170,90,50,50);
+		byID.addActionListener(this);
+
+		byAuthor = new JRadioButton("byAuthor");
+		byAuthor.setMnemonic(KeyEvent.VK_A);
+		byAuthor.setBounds(230,90,80,50);
+		byAuthor.addActionListener(this);
+
+		byCategory = new JRadioButton("byCategory");
+		byCategory.setMnemonic(KeyEvent.VK_C);
+		byCategory.setBounds(310,90,100,50);
+		byCategory.addActionListener(this);
+
+
+		rbGroup = new ButtonGroup();
+		rbGroup.add(byBook);
+		rbGroup.add(byID);
+		rbGroup.add(byAuthor);
+		rbGroup.add(byCategory);
+
+		cp.add(byBook);
+		cp.add(byID);
+		cp.add(byAuthor);
+		cp.add(byCategory);
+
+
+		//setLocation(50,50);
+		setTitle("Search Book");
+		setClosable(true);
+		setResizable(false);
+		setMaximizable(false);
+		setIconifiable(true);
+	    setVisible(true);
+	    btnSearch.addActionListener(this);
+		btnCancel.addActionListener(this);
+		
+		DefaultTableModel model = new DefaultTableModel();
+		model.addColumn("ID");
+		model.addColumn("Category");
+		model.addColumn("Name");
+		model.addColumn("Authors");
+		table = new JTable(model);
+
+		
+		
+		table.setPreferredScrollableViewportSize(new Dimension(500, 70));        							
+        JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setBounds(50,230, 500, 350);
+		cp.add(scrollPane);
+        table.setEnabled(false);
+	  }
+
+     public void actionPerformed(ActionEvent ae)
+	  {
+
+			String keyword=txtByName.getText();
+			if(ae.getSource()==btnSearch)
+			{
+				 if (keyword.length() > 0)
+				 {
+					String query = "";
+					try
+					{
+						st = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+						query = "select * from BookMaster where ";
+						
+						if (flag == 0)
+						{
+							query += "BookName like ('%" + keyword + "%')";
+						}
+						else if (flag == 1)
+						{
+							try
+							{
+								int i = Integer.parseInt(keyword);
+								query += "BookID=" + keyword + "";
+							}
+							catch (NumberFormatException nfe)
+							{
+								JOptionPane.showMessageDialog(this,"Enter Numeric value for ID","Invalid ID",JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+							
+						}
+						else if (flag == 2)
+						{
+							query += "BookAuth like '%" + keyword + "%'";
+						}
+						else if (flag == 3)
+						{
+							query += "BookCatID like '%" + keyword + "%'";
+						}
+						//System.out.println(query);
+						//query += "BookName like ('%" + keyword + "%')";
+
+						rs = st.executeQuery(query);
+						//System.out.println(query);
+												
+						if (rs.next())
+						{				
+							rs.last();
+							int rowCount = rs.getRow();
+							rs.beforeFirst();
+							Object[][] data = new Object[rowCount][4];
+							int i = 0;
+							DefaultTableModel model = (DefaultTableModel)table.getModel();
+							int tRowCount = model.getRowCount();
+
+							for (int k=0; k < tRowCount; k++)
+							{
+								model.removeRow(i);
+							}
+							Object rowData[] = new String[4];
+							while (rs.next())
+							{							
+
+									for (int j = 0; j < 4; j++)
+									{								
+								
+										String s = rs.getString(j+1);										
+										
+										rowData[j] = s;
+										
+										
+										
+									}
+									model.addRow(rowData);
+									i++;
+									//System.out.println("\n");
+							}
+
+							
+							
+						}
+                        else
+						{	
+                         
+						 JOptionPane.showMessageDialog(this,"This Book Does Not Exist in Database ","Wrong Book Name",JOptionPane.ERROR_MESSAGE);
+						
+						}
+		           rs.close();
+						
+			   }
+			    
+				catch (SQLException sqle)
+					{
+						System.out.println(sqle.getStackTrace());						
+					}
+				 }
+				 else
+				 {
+	 				JOptionPane.showMessageDialog(this,"Please enter Required Information","Required Information",JOptionPane.ERROR_MESSAGE);
+				 }
+				 return;
+
+
+			}
+			
+			if(ae.getSource()==btnCancel)
+			{
+				setVisible (false);
+				dispose();
+			}
+
+			if(ae.getSource()==byBook)
+			{
+				flag = 0;
+			}
+			if(ae.getSource()==byID)
+			{
+				flag = 1;
+			}
+			if(ae.getSource()==byAuthor)
+			{
+				flag = 2;
+			}
+			if(ae.getSource()==byCategory)
+			{
+				flag = 3;
+			}
+
+
+	}
+
+}
+
